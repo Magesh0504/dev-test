@@ -1,0 +1,278 @@
+{
+	"info": {
+		"_postman_id": "2d4e1ce6-bb75-4f4e-aa61-199c3bf1fbd8",
+		"name": "API Copy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31654150"
+	},
+	"item": [
+		{
+			"name": "Acceptance Job Creation",
+			"item": [
+				{
+					"name": "Create Session",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var json = pm.response.json()\r",
+									"pm.collectionVariables.set(\"X-Session-Token\",json.token)"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "//  {\r\n//     \"login\":\"operator10@poort80.nl\",\r\n//     \"password\":\"qwe345ygnuj\"\r\n//  }\r\n\r\n{\r\n    \"login\":\"magesh.kumar@bright-river.com\",\r\n    \"password\":\"PLDXEZAS\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/auth/sessions",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"auth",
+								"sessions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Job",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var json = pm.response.json()\r",
+									"\r",
+									"pm.collectionVariables.set(\"upload-url\",json.upload.postUrl)\r",
+									"pm.collectionVariables.set(\"download-url\",json.upload.getUrl)\r",
+									"pm.collectionVariables.set(\"job-id\",json.id)\r",
+									"\r",
+									"pm.test(\"Response status code is 201\", function () {\r",
+									"  pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response has the required fields\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"    \r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.id).to.exist;\r",
+									"    pm.expect(responseData.name).to.exist;\r",
+									"    pm.expect(responseData.description).to.exist;\r",
+									"    pm.expect(responseData.tags).to.exist;\r",
+									"    pm.expect(responseData.isTest).to.exist;\r",
+									"    pm.expect(responseData.upload).to.exist;\r",
+									"    pm.expect(responseData.download).to.exist;\r",
+									"    pm.expect(responseData._type).to.exist;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Upload postUrl and getUrl are not empty strings\", function () {\r",
+									"  const responseData = pm.response.json();\r",
+									"  \r",
+									"  pm.expect(responseData.upload.postUrl).to.not.be.empty;\r",
+									"  pm.expect(responseData.download.getUrl).to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 10000ms\", function () {\r",
+									"  pm.expect(pm.response.responseTime).to.be.below(10000);\r",
+									"});\r",
+									"\r","pm.collectionVariables.set(\"domain\",\"https://api.acc.bright-river.com\")",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"extract background\",\r\n    \"description\":\"extract background of images\",\r\n    \"isTest\":false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/jobs",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"jobs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Images",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": [
+										"C:/Users/Dhanush/Downloads/Preprocess PRODUCTION TESTING POSED/14513521QBR_960521690.jpg",
+										"C:/Users/Dhanush/Downloads/Preprocess PRODUCTION TESTING POSED/14513521QBD_466729138.jpg"
+									]
+								}
+							]
+						},
+						"url": {
+							"raw": "{{upload-url}}",
+							"host": [
+								"{{upload-url}}"
+							],
+							"query": [
+								{
+									"key": null,
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "file",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Request Offer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/jobs/:id/requestoffer",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"jobs",
+								":id",
+								"requestoffer"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "{{job-id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "apikey"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.request.headers.add({",
+							"    key:\"X-Client-Token\",",
+							"    value:\"mrc62efbb5804ffa9aa2a4d8e8abdbc4\"",
+							"})",
+							"",
+							"pm.request.headers.add({",
+							"    key:\"Accept\",",
+							"    value:\"application/json\"",
+							"})",
+							"",
+							"var sessionToken = pm.collectionVariables.get(\"X-Session-Token\");",
+							"",
+							"pm.request.headers.add({",
+							"    key:\"X-Session-Token\",",
+							"    value:sessionToken",
+							"})",
+							"",
+							"pm.collectionVariables.set(\"domain\",\"https://api.acc.bright-river.com\")"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "domain",
+			"value": ""
+		},
+		{
+			"key": "X-Session-Token\t",
+			"value": ""
+		},
+		{
+			"key": "X-Session-Token",
+			"value": ""
+		},
+		{
+			"key": "upload-url",
+			"value": ""
+		},
+		{
+			"key": "download-url",
+			"value": ""
+		},
+		{
+			"key": "job-id",
+			"value": ""
+		}
+	]
+}
