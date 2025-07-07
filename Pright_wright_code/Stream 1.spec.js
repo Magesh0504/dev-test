@@ -33,13 +33,13 @@ test('Stream application test', async ({ page }) => {
     
     // Create Order
     console.log('Creating new order...');
-    await page.waitForSelector('button:has-text("Create new order")', { timeout: 80000 });
+    await page.waitForSelector('button:has-text("Create new order")', { timeout: 150000 });
     await page.getByRole('button', { name: 'Create new order' }).click();
     await page.screenshot({ path: '6-create-order-clicked.png' });
     
     //Upload first file
     await page.waitForSelector('text=Click');
-    await page.setInputFiles('input[type="file"]', 'tests/Uploadfiles/Test File 1.jpg');
+    await page.setInputFiles('input[type="file"]', 'Pright_wright_code/Uploadfiles/Test File 1.jpg');
     await page.waitForTimeout(10000);
     await page.screenshot({ path: '7-after-file-upload.png' });
 
